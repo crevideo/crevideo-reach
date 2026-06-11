@@ -1,0 +1,20 @@
+{
+  "name": "crevideo",
+  "interface": {
+    "displayName": "Crevideo"
+  },
+  "plugins": [
+    {
+      "name": "crevideo-reach",
+      "source": {
+        "source": "local",
+        "path": "./plugins/crevideo-reach"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
