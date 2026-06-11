@@ -1,7 +1,7 @@
 {
   "name": "crevideo-reach",
-  "description": "Crevideo Reach creator-outreach toolkit — 9 skills (1 base playbook `mcp-playbook` that teaches the LLM how to drive the MCP + 8 business-scenario skills: creator fit scoring / tier resolver / offer policy / brand safety / outreach composer / reply triage / win-back & pruning / performance diagnosis) + Crevideo Reach MCP (74 tools, auto-registers as connector, OAuth on first use). Works with Claude Code, Claude.ai web, and OpenAI Codex — see README.",
-  "version": "3.2.3",
+  "description": "Turn Claude into your TikTok Shop affiliate outreach & marketing assistant — 9 skills (1 base playbook `mcp-playbook` + 8 business-scenario skills: creator fit scoring / tier resolver / offer policy / brand safety / outreach composer / reply triage / win-back & pruning / performance diagnosis) + Crevideo Reach MCP (74 tools, auto-registers as connector, OAuth sign-in). Works with Claude Code, Claude.ai web, and OpenAI Codex.",
+  "version": "3.2.4",
   "author": {
     "name": "Crevideo",
     "url": "https://crevideo.com"
