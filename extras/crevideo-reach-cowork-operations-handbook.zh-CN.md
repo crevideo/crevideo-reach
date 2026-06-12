@@ -211,7 +211,7 @@ First preview, then give me the full plan + expected credits + risks; stop and w
 ```
 Draft a formal collaboration email to [creator/list] (draft only, do not send), shop = [paste_SHOP_CIPHER], product = [product].
 You may list_email_templates as reference. The email must: be short and professional, state value and commission clearly, include compliance reqs (#ad / branded-content), no exaggeration.
-Only for **high-value creators** consider manage_contact_enrichment to enrich contact info (spends credits; needs my confirm).
+Only for **high-value creators** consider manage_contact_enrichment to enrich contact info (consumes the backend enrichment add-on quota, not MCP credits; needs my confirm).
 Give me the full email text + expected cost; stop and wait for "confirm" before send_email.
 ```
 
@@ -541,11 +541,11 @@ End with: "There are N strategic decisions awaiting your approval this month: ..
 
 ## 5.1 工具列表（按"你想干啥"分组）
 
-> 💳 = 花积分。**只有这 5 个花积分**：create_target_collab、create_dm_automation、create_tc_dm_automation、clone_and_modify_automation、manage_contact_enrichment。**所有 `list_/get_/query_/preview_` 都免费。**
+> 💳 = 花 MCP 积分。**只有这 4 个花积分**：create_target_collab、create_dm_automation、create_tc_dm_automation、clone_and_modify_automation。**所有 `list_/get_/query_/preview_` 都免费。**（manage_contact_enrichment(enrich) 消耗的是后端联系方式增强套餐额度，不是 MCP 积分。）
 
 **(1) 看店铺 + 商品**：`list_shops`（拿 shop_cipher，到处用）· `list_products`（**只有 ACTIVATE 状态的商品能发起合作**）· `get_product_detail` · `list_creator_categories`（按类目名筛时拿类目 ID）· `list_shop_orders`（归因到达人的订单）
 
-**(2) 找达人 / 获取**：`list_affiliate_creators`（合作中的达人；返 user_id + record id）· `search_affiliate_creators`（按条件搜）· `find_similar_creators`（按 user_id 种子找相似）· `list_customer_advocates`（客户即达人，最暖线索）· `manage_customer_advocates` · `list_journeys`（达人旅程组）· `list_segments`（保存的筛选组）· `manage_contact_enrichment` 💳（联系方式增强）
+**(2) 找达人 / 获取**：`list_affiliate_creators`（合作中的达人；返 user_id + record id）· `search_affiliate_creators`（按条件搜）· `find_similar_creators`（按 user_id 种子找相似）· `list_customer_advocates`（客户即达人，最暖线索）· `manage_customer_advocates` · `list_journeys`（达人旅程组）· `list_segments`（保存的筛选组）· `manage_contact_enrichment`（联系方式增强——消耗后端套餐额度，非 MCP 积分）
 
 **(3) 达人详情 / 管理**：`get_creator_detail`（按 user_id）· `update_creator_metadata`（tag 用 record id，notes 用 user_id）· `manage_creator_blacklist`（加 / 移；需要 confirm + record id + 原因码 1-6）· `manage_creator_lists`（创建 / 改名；加 / 移要 confirm）
 

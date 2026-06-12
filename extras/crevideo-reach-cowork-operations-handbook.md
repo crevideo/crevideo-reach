@@ -211,7 +211,7 @@ First preview, then give me the full plan + expected credits + risks; stop and w
 ```
 Draft a formal collaboration email to [creator/list] (draft only, do not send), shop = [paste_SHOP_CIPHER], product = [product].
 You may list_email_templates as reference. The email must: be short and professional, state value and commission clearly, include compliance reqs (#ad / branded-content), no exaggeration.
-Only for **high-value creators** consider manage_contact_enrichment to enrich contact info (spends credits; needs my confirm).
+Only for **high-value creators** consider manage_contact_enrichment to enrich contact info (consumes the backend enrichment add-on quota, not MCP credits; needs my confirm).
 Give me the full email text + expected cost; stop and wait for "confirm" before send_email.
 ```
 
@@ -541,11 +541,11 @@ End with: "There are N strategic decisions awaiting your approval this month: ..
 
 ## 5.1 Tool list (grouped by "what you want to do")
 
-> 💳 = spends credits. **Only these 5 spend credits**: create_target_collab, create_dm_automation, create_tc_dm_automation, clone_and_modify_automation, manage_contact_enrichment. **All `list_/get_/query_/preview_` are free.**
+> 💳 = spends MCP credits. **Only these 4 spend credits**: create_target_collab, create_dm_automation, create_tc_dm_automation, clone_and_modify_automation. **All `list_/get_/query_/preview_` are free.** (manage_contact_enrichment(enrich) consumes the backend enrichment add-on quota, not MCP credits.)
 
 **(1) Look at shops and products**: `list_shops` (get shop_cipher, used everywhere) · `list_products` (**only ACTIVATE-status products can launch collaborations**) · `get_product_detail` · `list_creator_categories` (get category IDs when filtering by category name) · `list_shop_orders` (orders attributed to creators)
 
-**(2) Find creators / acquisition**: `list_affiliate_creators` (collaborating creators; returns user_id + record id) · `search_affiliate_creators` (search by conditions) · `find_similar_creators` (lookalikes from user_id seeds) · `list_customer_advocates` (customer-creators, warmest leads) · `manage_customer_advocates` · `list_journeys` (creator journey groups) · `list_segments` (saved filter groups) · `manage_contact_enrichment` 💳 (enrich contact info)
+**(2) Find creators / acquisition**: `list_affiliate_creators` (collaborating creators; returns user_id + record id) · `search_affiliate_creators` (search by conditions) · `find_similar_creators` (lookalikes from user_id seeds) · `list_customer_advocates` (customer-creators, warmest leads) · `manage_customer_advocates` · `list_journeys` (creator journey groups) · `list_segments` (saved filter groups) · `manage_contact_enrichment` (enrich contact info — backend quota, not MCP credits)
 
 **(3) Creator detail / management**: `get_creator_detail` (by user_id) · `update_creator_metadata` (tags use record id, notes use user_id) · `manage_creator_blacklist` (add/remove; needs confirm + record id + reason code 1-6) · `manage_creator_lists` (create/rename lists; add/remove needs confirm)
 
