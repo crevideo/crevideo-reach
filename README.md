@@ -4,7 +4,7 @@
 
 > 🇺🇸 **English (this page)** · 🇨🇳 [中文版 / Chinese version](./README.zh-CN.md)
 
-> 1 base skill + 8 business-scenario skills + Crevideo Reach MCP (74 tools) + 5 scheduled-task templates + 2 Project Instructions
+> 1 base skill + 8 business-scenario skills + Crevideo Reach MCP (79 tools) + 5 scheduled-task templates + 2 Project Instructions
 > Works with Claude Code, Claude.ai web, and OpenAI Codex.
 
 > **For**: TikTok Shop **US-Local** sellers driving affiliate creator outreach. China cross-border (POP) sellers — see the [中文版](./README.zh-CN.md) for localized wording.
@@ -36,7 +36,7 @@ In your terminal or VS Code:
 
 Two things happen on install:
 1. **9 skills auto-load** — triggered by natural business prompts ("score these creators", "draft an outreach message")
-2. **MCP tools auto-connect** — first tool call pops a browser → OAuth to app.crevideo.com → log in to your Reach account → you can use all 74 tools
+2. **MCP tools auto-connect** — first tool call pops a browser → OAuth to app.crevideo.com → log in to your Reach account → you can use all 79 tools
 
 Run `/plugin list` to see what's installed, `/mcp` to check MCP connection status.
 
@@ -103,7 +103,7 @@ Click **Add marketplace** → marketplace "Crevideo" shows up in the filter → 
 | `winback-and-pruning` | Wins back silent creators + prunes inactive ones |
 | `performance-diagnosis` | Post-automation performance diagnosis + next-step recommendations |
 
-### 🟢 MCP Server: `crevideo-reach` (74 tools)
+### 🟢 MCP Server: `crevideo-reach` (79 tools)
 
 Connects to `https://mcp.crevideo.com/reach` over OAuth — no manual API key configuration.
 

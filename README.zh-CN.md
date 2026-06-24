@@ -4,7 +4,7 @@
 
 > 🇨🇳 **中文版（本页）** · 🇺🇸 [English](./README.md)
 
-> 1 个基础 skill + 8 个业务场景 skill + Crevideo Reach MCP（74 个工具）+ 5 个定时任务模板 + 2 个 Project Instructions
+> 1 个基础 skill + 8 个业务场景 skill + Crevideo Reach MCP（79 个工具）+ 5 个定时任务模板 + 2 个 Project Instructions
 > 支持 Claude Code、Claude.ai 网页版、OpenAI Codex 三端。
 
 > **面向**：TikTok Shop **中国跨境（POP）** 卖家做达人分销建联、邀约、谈判、私信邮件外发、复盘。美国本土卖家请看 [English version](./README.md)。
@@ -36,7 +36,7 @@
 
 装完会发生两件事：
 1. **9 个 skill 自动加载** —— 用业务话术触发（"给这批达人打分"、"写条触达文案"）
-2. **MCP 工具自动连接** —— 首次调用工具时弹浏览器走 OAuth → 跳到 app.crevideo.com 登录你的 Reach 账号 → 回来后 74 个工具都可以用
+2. **MCP 工具自动连接** —— 首次调用工具时弹浏览器走 OAuth → 跳到 app.crevideo.com 登录你的 Reach 账号 → 回来后 79 个工具都可以用
 
 `/plugin list` 看装了什么，`/mcp` 看 MCP 连接状态。
 
@@ -103,7 +103,7 @@ Codex 期望插件放在 `plugins/codex/` 子目录下（跟 Claude Code "插件
 | `winback-and-pruning` | 唤回沉默达人 + 汰换不活跃达人 |
 | `performance-diagnosis` | 自动化跑完后做效果诊断 + 给下一步建议 |
 
-### 🟢 MCP Server: `crevideo-reach`（74 个工具）
+### 🟢 MCP Server: `crevideo-reach`（79 个工具）
 
 通过 OAuth 连到 `https://mcp.crevideo.com/reach` —— 不需要手动配 API key。
 
