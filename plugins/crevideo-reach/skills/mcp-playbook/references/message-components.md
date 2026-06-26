@@ -5,7 +5,7 @@ Every DM message in `create_dm_automation` / `create_tc_dm_automation` is an **a
 | type | purpose | required field | wire `content_type` | wire `content` |
 |---|---|---|---|---|
 | `text` | Plain text body (templated) | `text: string` | 1 | MCP creates a server template, stores `template_id` as content |
-| `image` | Single image (png/jpg/jpeg/webp/gif, ≤10 MB) | `image_path: string` (absolute local path) | 6 | `"<image_no>.<ext>"` after OSS upload |
+| `image` | Single image (png/jpg/jpeg/webp/gif, ≤10 MB) | `image_path` (absolute local path — local MCP) **OR** `image_base64` (raw/data-URL — hosted/web like claude.ai) | 6 | `"<image_no>.<ext>"` after OSS upload |
 | `product` | Product card | `product_id: string` (from `list_products`) | 2 | product_id string |
 | `collab` | Target-collab card pointing at THIS automation's TC | `use_this_tc: true` | 3 | literal `"default"` |
 

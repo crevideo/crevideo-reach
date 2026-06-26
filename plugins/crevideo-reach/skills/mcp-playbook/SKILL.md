@@ -58,7 +58,7 @@ Every automation create chains these 6 phases — don't jump to the final call:
 ```
 **Only skip a phase** when the user explicitly supplied that data. Don't invent defaults for shop or products.
 
-**Creator source alternates** (skip preview; need `shop_cipher`): `source='manual'` takes `appoint_creator_list` = **TikTok handles** (unique_id, `@` ok) — the MCP resolves them to the right wire ID space automatically; unknown handles fail fast. `'list'` / `'segment'` / `'journey'` take IDs from the matching `manage_*` list action; `'target_collab'` (DM-only) re-targets a TC automation's creators. `clone_and_modify_automation` is filter-source-only — manual-source automations can't be cloned, create anew.
+**Creator source alternates** (skip preview; need `shop_cipher`): `source='manual'` takes `appoint_creator_list` = **TikTok handles** (unique_id, `@` ok) — the MCP resolves them to the right wire ID space automatically; unknown handles fail fast. `'list'` / `'segment'` / `'journey'` take IDs from the matching `manage_*` list action; `'target_collab'` (DM-only) re-targets a TC automation's creators; `'intelligent_recommend'` (**TC/combined only — needs a product**) takes `appoint_creator_list` = **creator_open_ids from `recommend_creators`** (达人罗盘 / AI Creator Compass). `clone_and_modify_automation` is filter-source-only — manual-source automations can't be cloned, create anew.
 
 **Timing parameters** (2026-06-11): `tc_schedule`/`tc_delay_time`/`tc_time_unit` (TC/combined — delay the TC entity creation), `send_schedule`/... (DM-only — delay the whole send), `dm_schedule`/... (combined — delay the DM part). All default immediate; `'delay'` needs raw amount (NOT seconds) + unit. **Follow-ups are delay-only** (immediate removed from the product 2026-06-10; default 10 minutes after the previous message) — the initial message still sends immediately. Backend doesn't echo these inputs; verify via `tasks[].pending_excute_time` on the list row.
 
@@ -110,7 +110,7 @@ Direct-entity TCs **don't appear in `list_automations`** — list via `list_targ
 | `skip_messaged_within_days: number` (0=off) | skip anyone messaged within N days | off |
 
 ## Message components (summary)
-Each DM message is an **array of components** sent in order. 4 types: `text` (templated body), `image` (local path, ≤10 MB), `product` (`product_id`), `collab` (`use_this_tc:true`, **combined-only — DM-only rejects it**). Full wire formats, image OSS-upload mechanics, follow-up sequencing, and unsupported composite types → **`references/message-components.md`**.
+Each DM message is an **array of components** sent in order. 4 types: `text` (templated body), `image` (`image_path` local path for local MCP, or `image_base64` raw/data-URL for hosted/web like claude.ai, ≤10 MB), `product` (`product_id`), `collab` (`use_this_tc:true`, **combined-only — DM-only rejects it**). Full wire formats, image OSS-upload mechanics, follow-up sequencing, and unsupported composite types → **`references/message-components.md`**.
 
 ## Conversations + email
 - DM: `list_conversations` / `get_conversation_messages` / `send_message` (real outbound — confirm). Triage by group: `list_conversation_groups` → `list_group_conversations` (don't client-side filter the flat list for "unread").
