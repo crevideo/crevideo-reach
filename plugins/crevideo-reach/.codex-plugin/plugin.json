@@ -1,6 +1,6 @@
 {
   "name": "crevideo-reach",
-  "version": "3.2.7",
+  "version": "3.2.8",
   "description": "Turn Claude into your TikTok Shop affiliate outreach & marketing assistant — 9 skills (1 base playbook `mcp-playbook` + 8 business-scenario skills: creator fit scoring / tier resolver / offer policy / brand safety / outreach composer / reply triage / win-back & pruning / performance diagnosis) + Crevideo Reach MCP (79 tools, auto-registers as connector, OAuth sign-in). Works with Claude Code, Claude.ai web, and OpenAI Codex.",
   "author": {
     "name": "Crevideo",
@@ -9,7 +9,13 @@
   "homepage": "https://github.com/crevideo/crevideo-reach",
   "repository": "https://github.com/crevideo/crevideo-reach",
   "license": "MIT",
-  "keywords": ["affiliate", "tiktok-shop", "creator-outreach", "crevideo", "reach"],
+  "keywords": [
+    "affiliate",
+    "tiktok-shop",
+    "creator-outreach",
+    "crevideo",
+    "reach"
+  ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
