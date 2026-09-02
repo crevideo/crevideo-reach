@@ -16,12 +16,12 @@ Disable `crevideo-reach` during acceptance so only the test skills and connector
 
 ```text
 /plugin marketplace add /Users/a1234/Desktop/crevideo-reach
-/plugin install crevideo-reach-test@crevideo
+/plugin install crevideo-reach-test@crevideo-test
 ```
 
 ### OpenAI Codex
 
-Add `/Users/a1234/Desktop/crevideo-reach/.agents/plugins` as a local plugin marketplace, then install `crevideo-reach-test` from marketplace `crevideo`.
+Add `/Users/a1234/Desktop/crevideo-reach/.agents/plugins` as a local plugin marketplace, then install `crevideo-reach-test` from marketplace `crevideo-test`.
 
 Start a new conversation after installation so the client reloads skills and MCP tools.
 
