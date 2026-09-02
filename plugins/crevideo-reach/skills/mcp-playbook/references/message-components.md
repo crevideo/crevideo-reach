@@ -36,8 +36,13 @@ Failure surfaces as `ValidationError` / `OssUploadError` — nothing silent.
 ## Collab card scope
 Only `{ type: "collab", use_this_tc: true }` is supported (wire `content = "default"`), **combined automations only**. **DM-only rejects collab** (UI gate `MessageComponentsSection.tsx:34`); MCP throws `ValidationError` pointing to `create_tc_dm_automation`. To attach an **arbitrary existing** TC, you'd need a `list_target_collaborations` tool — not shipped; if asked, call it a known gap, don't fabricate collab IDs.
 
-## Content types we explicitly do NOT support
-- `text-image` composite (`content_type: 4`) and `text-product-card` composite (`content_type: 5`) — out of scope. If asked, say "split into separate text + image / product components".
+## Direct DM composite cards
+`send_message` supports two official direct-DM card modes that are separate from automation components:
+
+- `text_image_card` → `CRM_TEXT_WITH_IMAGE_CARD`; requires `title`, `content`, exactly one image source, and `confirm:true`. The structured body contains the uploaded OSS `image_no`.
+- `text_products_card` → `CRM_TEXT_WITH_PRODUCTS_CARD`; requires `title`, `content`, 1-5 unique `product_ids`, and `confirm:true`. MCP verifies every product belongs to the selected shop.
+
+Do not use these mode names inside `create_dm_automation` or `create_tc_dm_automation`; those tools still use the component table above.
 
 ## Follow-up sequences
 Up to 4 follow-ups after the initial (UI caps at 5 total). Each is a full **sequence** with its own `components`:

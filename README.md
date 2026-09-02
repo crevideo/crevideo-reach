@@ -7,7 +7,7 @@
 > 1 base skill + 8 business-scenario skills + Crevideo Reach MCP (79 tools) + 5 scheduled-task templates + 2 Project Instructions
 > Works with Claude Code, Claude.ai web, and OpenAI Codex.
 
-> **For**: TikTok Shop **US-Local** sellers driving affiliate creator outreach. China cross-border (POP) sellers — see the [中文版](./README.zh-CN.md) for localized wording.
+> **For**: TikTok Shop sellers running affiliate creator outreach across their authorized Reach markets. China cross-border (POP) sellers — see the [中文版](./README.zh-CN.md) for localized wording.
 
 ---
 
@@ -111,8 +111,10 @@ Capability surface:
 - **Target Collaboration (TC)**: preview / create / start-stop / delete / clone / task results
 - **DM automation**: single-message DM / combined TC+DM / edit text of live DM (`update_dm_automation_text`)
 - **Creator management**: search / find-similar / detail / blacklist / tags / segments / journeys / creator lists
-- **DM**: conversations / history / send
-- **Email**: template list + inbox counts (send/reply pending the asset endpoint on backend)
+- **DM**: conversations / history / send text, image, text+image cards, and text+product cards
+- **Email**: templates / drafts / inbox / send / reply / groups / trash
+
+Multi-market behavior: call `list_shops` first, select an authorized region, and keep `region` / `shop_id_list` / `shop_cipher` aligned. GMV and GPM filters use each market's local-currency presets and display conventions; US ranges are not universal.
 - **Affiliate content**: lists / products
 - **Customer Advocates (CA)**: list / tags / notes / contact enrichment
 - **Shops / products / orders / analytics**: shop list / product list+detail / shop orders / affiliate analytics (collab / product / shoppable-video)
