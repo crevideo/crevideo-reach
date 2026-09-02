@@ -1,0 +1,9 @@
+{
+  "name": "crevideo-reach-test",
+  "description": "Testing build of Crevideo Reach for multi-market TikTok Shop affiliate workflows — 9 skills + 79 MCP tools connected only to the isolated test MCP environment.",
+  "version": "3.3.0-test.1",
+  "author": {
+    "name": "Crevideo",
+    "url": "https://crevideo.com"
+  }
+}

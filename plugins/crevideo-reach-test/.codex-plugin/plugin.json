@@ -1,0 +1,42 @@
+{
+  "name": "crevideo-reach-test",
+  "version": "3.3.0-test.1",
+  "description": "Testing build of Crevideo Reach for multi-market TikTok Shop affiliate workflows — 9 skills + 79 MCP tools connected only to the isolated test MCP environment.",
+  "author": {
+    "name": "Crevideo",
+    "url": "https://crevideo.com"
+  },
+  "homepage": "https://github.com/crevideo/crevideo-reach",
+  "repository": "https://github.com/crevideo/crevideo-reach",
+  "license": "MIT",
+  "keywords": [
+    "affiliate",
+    "tiktok-shop",
+    "creator-outreach",
+    "crevideo",
+    "reach",
+    "test",
+    "multi-market"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Crevideo Reach Test",
+    "shortDescription": "Test multi-market affiliate workflows safely",
+    "longDescription": "Testing build of Crevideo Reach for multi-market TikTok Shop affiliate workflows — 9 skills + 79 MCP tools connected only to the isolated test MCP environment.",
+    "developerName": "Crevideo",
+    "category": "Productivity",
+    "websiteURL": "https://crevideo.com",
+    "capabilities": [
+      "TikTok Shop affiliate operations",
+      "Multi-market creator discovery",
+      "Creator outreach",
+      "Performance analysis"
+    ],
+    "defaultPrompt": [
+      "List my Reach shops and show each market and currency.",
+      "Find the best TikTok Shop creators in one authorized market.",
+      "Analyze affiliate performance for a selected market and recommend next steps."
+    ]
+  }
+}

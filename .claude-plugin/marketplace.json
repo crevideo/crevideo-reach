@@ -9,6 +9,11 @@
       "name": "crevideo-reach",
       "source": "./plugins/crevideo-reach",
       "description": "Turn Claude into your TikTok Shop affiliate outreach & marketing assistant — 9 skills (1 base playbook `mcp-playbook` + 8 business-scenario skills: creator fit scoring / tier resolver / offer policy / brand safety / outreach composer / reply triage / win-back & pruning / performance diagnosis) + Crevideo Reach MCP (79 tools, auto-registers as connector, OAuth sign-in). Works with Claude Code, Claude.ai web, and OpenAI Codex."
+    },
+    {
+      "name": "crevideo-reach-test",
+      "source": "./plugins/crevideo-reach-test",
+      "description": "Testing build of Crevideo Reach for multi-market TikTok Shop affiliate workflows — 9 skills + 79 MCP tools connected only to the isolated test MCP environment."
     }
   ]
 }

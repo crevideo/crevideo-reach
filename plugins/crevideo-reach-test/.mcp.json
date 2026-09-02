@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "crevideo-reach-test": {
+      "type": "http",
+      "url": "https://test-mcp.crevideo.com/reach",
+      "oauth": {
+        "authServerMetadataUrl": "https://test-mcp.crevideo.com/.well-known/oauth-authorization-server"
+      }
+    }
+  }
+}
