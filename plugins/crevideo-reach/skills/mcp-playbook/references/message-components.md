@@ -39,6 +39,9 @@ Failure surfaces as `ValidationError` / `OssUploadError` — nothing silent.
 Only `{ type: "collab", use_this_tc: true }` is supported (wire `content = "default"`), **combined automations only**. **DM-only rejects collab** (UI gate `MessageComponentsSection.tsx:34`); MCP throws `ValidationError` pointing to `create_tc_dm_automation`. To attach an **arbitrary existing** TC, you'd need a `list_target_collaborations` tool — not shipped; if asked, call it a known gap, don't fabricate collab IDs.
 
 ## Native composite cards
+
+**Mandatory intent routing:** if the user only says "图文" / "图文私信" / "文字配图", ask one short clarification before preview/create: "要单张图文卡，还是文字和图片分开发？" Explicit "图文卡/一个卡片/不要分开" means a single native `text_image_card`; explicit "分开发/两个组件/两条消息" means separate `text` + `image`. "文字商品卡" means a single native `text_products_card` unless separation is explicit.
+
 `send_message` supports two official direct-DM card modes:
 
 - `text_image_card` → `CRM_TEXT_WITH_IMAGE_CARD`; requires `title`, `content`, exactly one image source, and `confirm:true`. The structured body contains the uploaded OSS `image_no`.

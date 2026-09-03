@@ -115,7 +115,7 @@ Direct-entity TCs **don't appear in `list_automations`** — list via `list_targ
 | `skip_messaged_within_days: number` (0=off) | skip anyone messaged within N days | off |
 
 ## Message components (summary)
-Automation DM messages are ordered arrays of `text` / `image` / `product` / `collab` / `text_image_card` / `text_products_card` components. The two native composite cards work in both the initial message and every delayed follow-up. Direct `send_message` supports the same card names as message modes. Full wire formats and the distinction between these surfaces → **`references/message-components.md`**.
+Automation DM messages are ordered arrays of `text` / `image` / `product` / `collab` / `text_image_card` / `text_products_card` components. The two native composite cards work in both the initial message and every delayed follow-up. **Intent rule:** when the user only says "图文" / "图文私信" / "文字配图", ask "要单张图文卡，还是文字和图片分开发？" before preview/create. Explicit "图文卡/不要分开" means ONE `text_image_card`; explicit "分开发/两个组件/两条消息" means separate `text` + `image`. "文字商品卡" means ONE `text_products_card` unless separation is explicit. Direct `send_message` supports the same card names as message modes. Full wire formats → **`references/message-components.md`**.
 
 ## Conversations + email
 - DM: `list_conversations` / `get_conversation_messages` / `send_message` (real outbound — confirm). Triage by group: `list_conversation_groups` → `list_group_conversations` (don't client-side filter the flat list for "unread").
@@ -134,5 +134,5 @@ Automation DM messages are ordered arrays of `text` / `image` / `product` / `col
 
 ## Deep references (load on demand)
 - **`references/filters.md`** — full `preview_target_collab` filter schema: every field shape, enum buckets, the ×100 / no-×100 rules, and a natural-language→filter example.
-- **`references/message-components.md`** — the 4 component types' wire formats, image OSS upload, collab-card scope, unsupported composites, and follow-up sequence wire detail.
+- **`references/message-components.md`** — all 6 component types, native-card intent routing, image OSS upload, collab-card scope, and follow-up sequence wire detail.
 - **`references/debugging.md`** — the 3-layer (curl readback → wire capture → source read) debugging method, common error→cause table, Copy-flow template requirement, sample-approval radios, and the version-change history.

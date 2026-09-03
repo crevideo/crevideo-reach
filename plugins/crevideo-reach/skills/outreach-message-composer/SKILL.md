@@ -27,11 +27,12 @@ Tool names (e.g. `send_email`, `create_dm_automation`) stay identical in both la
 2. Product (name/category/price; must be ACTIVATE).
 3. Scenario: cold / follow-up / negotiation reply.
 4. Optional: proposed commission (if the copy must mention it).
+5. Message format intent: plain text / native 图文 card / native 文字商品卡 / separate components. If the user only says "图文", ask which of the last two they mean.
 
 ## Steps (in order)
 1. Read brand voice (project `Knowledge/brand-voice`; default "warm but professional, no emoji" if absent) and the current hero product + angle (`sku-catalog-snapshot`, if present); **before contacting, compare against `Knowledge/do-not-contact` and drop matches (before ranking)**.
 2. **Pick the channel** (per the Cheat Sheet's outreach waterfall): warm / existing / customer-type → prefer Target Collaboration; cold T2/T3 → DM first, asking permission for "a quick chat"; cold VIP/T1, or DM with no reply → email (consider enrichment only for high value).
-3. **Set tone & length by tier**: higher tier = more personalized, more creative latitude; lower tier = concise, one clear value point. **Do not drop a commission number early in a cold DM** (hold it until they reply — acceptance is higher).
+3. **Resolve message format before drafting**: if the merchant only says "图文" / "图文私信" / "文字配图", ask "要单张图文卡，还是文字和图片分开发？" Explicit "图文卡/不要分开" uses one `text_image_card`; explicit "分开发" uses separate `text` + `image`. "文字商品卡" uses one `text_products_card` unless separation is explicit. Then set tone and length by tier: higher tier = more personalized; lower tier = concise. **Do not drop a commission number early in a cold DM**.
 4. **Draft 3 versions** (1 primary + 2 alternates, differentiated tone); email must carry the value prop + compliance requirements (#ad / branded-content).
 5. **Force brand-safety-compliance**: any version that hits a block is rewritten, not output, with the violated rule noted.
 6. **If commission is mentioned** → run offer-policy-checker; if over the cap, flag a red warning at the top of the copy.
@@ -46,6 +47,7 @@ Tool names (e.g. `send_email`, `create_dm_automation`) stay identical in both la
 - Never pretend "we talked" in a follow-up (no real interaction); never impersonate the brand founder.
 - Never drop a commission number early in a cold DM; never write over-long copy (long DMs tank open rate).
 - Never auto-send — produce copy only; sending is a 🔴 action needing human confirm.
+- Never guess what bare "图文" means. Ask whether it is one native card or separate text + image before drafting or creating.
 
 ## 📌 Strategy dependency (anti-staleness)
 The outreach waterfall, anti-spam defaults, naming rules, and compliance red lines all come from the Action Workspace Doctrine → Key-Rules Cheat Sheet; brand voice comes from `Knowledge/brand-voice`. If an example here conflicts with current policy, the Cheat Sheet wins. Use the email tools that actually exist (send_email / reply_email, etc.); only call tools that exist.
