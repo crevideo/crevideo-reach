@@ -3,7 +3,7 @@
 This repository includes an isolated pre-release plugin for multi-market acceptance testing.
 
 - Plugin ID: `crevideo-reach-test`
-- Version: `3.3.0-test.1`
+- Version: `3.3.0-test.2`
 - MCP: `https://test-mcp.crevideo.com/reach`
 - OAuth metadata: `https://test-mcp.crevideo.com/.well-known/oauth-authorization-server`
 - Production plugin and production MCP are unchanged.

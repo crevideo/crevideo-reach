@@ -124,7 +124,7 @@ Automation DM messages are arrays of `text` / `image` / `product` / `collab` com
 - Email: `thread_id` = root_email_id (a per-message id returns code=-1); read `get_email_detail` before `reply_email`. `send_email` requires `shop_id` (auto-resolves single-shop). Templates are starting drafts, not verbatim sends. Both send tools need `confirm:true`.
 
 ## Sample approval (申样)
-`manage_sample_auto_approval` `get`/`update` sets the rule thresholds; `manage_sample_applications` `list` (needs `shop_cipher`) → `approve` / `reject` by `apply_id` clears what the rule didn't cover.
+`manage_sample_auto_approval` `get`/`update` sets the rule thresholds; `manage_sample_applications` `list` uses `region` + optional numeric `shop_id_list` (omit it for all authorized shops in that region; never pass `shop_cipher`) → `approve` / `reject` uses `shop_cipher` + `application_ids` + `confirm:true` to clear what the rule did not cover.
 
 ## Safety defaults (do NOT change without explicit user intent)
 - `start_immediately` defaults to **false** — only `true` on literal "立即启动/send now/start now/发吧". Treat `true` as **destructive** (messages go to real creators); confirm first.
