@@ -115,7 +115,7 @@ Direct-entity TCs **don't appear in `list_automations`** — list via `list_targ
 | `skip_messaged_within_days: number` (0=off) | skip anyone messaged within N days | off |
 
 ## Message components (summary)
-Automation DM messages are arrays of `text` / `image` / `product` / `collab` components. Direct `send_message` additionally supports official `text_image_card` and `text_products_card` modes. Full wire formats and the distinction between these surfaces → **`references/message-components.md`**.
+Automation DM messages are ordered arrays of `text` / `image` / `product` / `collab` / `text_image_card` / `text_products_card` components. The two native composite cards work in both the initial message and every delayed follow-up. Direct `send_message` supports the same card names as message modes. Full wire formats and the distinction between these surfaces → **`references/message-components.md`**.
 
 ## Conversations + email
 - DM: `list_conversations` / `get_conversation_messages` / `send_message` (real outbound — confirm). Triage by group: `list_conversation_groups` → `list_group_conversations` (don't client-side filter the flat list for "unread").
