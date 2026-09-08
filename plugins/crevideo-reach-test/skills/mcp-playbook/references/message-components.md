@@ -44,6 +44,26 @@ Only `{ type: "collab", use_this_tc: true }` is supported (wire `content = "defa
 
 Do not use these mode names inside `create_dm_automation` or `create_tc_dm_automation`; those tools still use the component table above.
 
+## Reading conversation history and rich cards
+`get_conversation_messages` is cursor-paginated and returns one page (default 20), not the full thread. Pass `next_page_token` back as `page_token` to read older pages. Only state that the full history was read after a response has no next token.
+
+The Brand inbox renders these as customer-visible message types, and MCP output should be explained the same way:
+
+| wire type | customer-visible meaning |
+|---|---|
+| `TEXT` | plain text |
+| `IMAGE` | standalone image |
+| `EMOTICONS` | emoticon/sticker |
+| `CRM_TEXT_WITH_IMAGE_CARD` | one text+image card |
+| `CRM_TEXT_WITH_PRODUCTS_CARD` | one text+products card |
+| `PRODUCT_CARD` | product card |
+| `TARGET_COLLABORATION_CARD` | target-collaboration invitation |
+| `FREE_SAMPLE_CARD` | free-sample/application card |
+| `SPARK_CODE_REQUEST_CARD` | Spark Code authorization request |
+| `NOTIFICATION` | system notification |
+
+Do not reduce rich cards to opaque type labels. Surface their returned title/text, media URL, product details, sample status, collaboration data, or authorization fields. For an unknown future type, preserve its type and useful primitive fields rather than silently dropping it.
+
 ## Follow-up sequences
 Up to 4 follow-ups after the initial (UI caps at 5 total). Each is a full **sequence** with its own `components`:
 ```ts
