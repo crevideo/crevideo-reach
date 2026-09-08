@@ -6,6 +6,8 @@ Every DM message in `create_dm_automation` / `create_tc_dm_automation` is an **a
 |---|---|---|---|---|
 | `text` | Plain text body (templated) | `text: string` | 1 | MCP creates a server template, stores `template_id` as content |
 | `image` | Single image (png/jpg/jpeg/webp/gif, ≤10 MB) | `image_path` (absolute local path — local MCP) **OR** `image_base64` (raw/data-URL — hosted/web like claude.ai) | 6 | `"<image_no>.<ext>"` after OSS upload |
+| `text_image_card` | One native text+image card | `title`, `content`, and one image source | 4 | server message-template id |
+| `text_products_card` | One native text+products card | `title`, `content`, `product_ids` | 5 | server message-template id |
 | `product` | Product card | `product_id: string` (from `list_products`) | 2 | product_id string |
 | `collab` | Target-collab card pointing at THIS automation's TC | `use_this_tc: true` | 3 | literal `"default"` |
 
@@ -34,15 +36,15 @@ For each image component, MCP:
 Failure surfaces as `ValidationError` / `OssUploadError` — nothing silent.
 
 ## Collab card scope
-Only `{ type: "collab", use_this_tc: true }` is supported (wire `content = "default"`), **combined automations only**. **DM-only rejects collab** (UI gate `MessageComponentsSection.tsx:34`); MCP throws `ValidationError` pointing to `create_tc_dm_automation`. To attach an **arbitrary existing** TC, you'd need a `list_target_collaborations` tool — not shipped; if asked, call it a known gap, don't fabricate collab IDs.
+Only `{ type: "collab", use_this_tc: true }` is supported (wire `content = "default"`), **combined automations only**. **DM-only rejects collab** (UI gate `MessageComponentsSection.tsx:34`); MCP throws `ValidationError` pointing to `create_tc_dm_automation`. Use `list_target_collaborations` to inspect existing TCs. Automation collab components still point only to the TC owned by that combined automation; do not fabricate an arbitrary TC attachment.
 
-## Direct DM composite cards
-`send_message` supports two official direct-DM card modes that are separate from automation components:
+## Native composite cards
+Both automation messages and direct `send_message` support the two official composite-card meanings. Automation uses component `type`; direct send uses `mode`:
 
 - `text_image_card` → `CRM_TEXT_WITH_IMAGE_CARD`; requires `title`, `content`, exactly one image source, and `confirm:true`. The structured body contains the uploaded OSS `image_no`.
 - `text_products_card` → `CRM_TEXT_WITH_PRODUCTS_CARD`; requires `title`, `content`, 1-5 unique `product_ids`, and `confirm:true`. MCP verifies every product belongs to the selected shop.
 
-Do not use these mode names inside `create_dm_automation` or `create_tc_dm_automation`; those tools still use the component table above.
+For automation creation put these names in `initial_components` or `follow_ups[].components` as `type`. For direct sending pass the name as `mode`. If the user says only “图文”, ask whether they mean one native card or separate text and image components.
 
 ## Reading conversation history and rich cards
 `get_conversation_messages` is cursor-paginated and returns one page (default 20), not the full thread. Pass `next_page_token` back as `page_token` to read older pages. Only state that the full history was read after a response has no next token.
@@ -62,18 +64,18 @@ The Brand inbox renders these as customer-visible message types, and MCP output 
 | `SPARK_CODE_REQUEST_CARD` | Spark Code authorization request |
 | `NOTIFICATION` | system notification |
 
-Do not reduce rich cards to opaque type labels. Surface their returned title/text, media URL, product details, sample status, collaboration data, or authorization fields. For an unknown future type, preserve its type and useful primitive fields rather than silently dropping it.
+Do not reduce rich cards to opaque type labels. Surface their returned title/text, media URL, product details, sample status, collaboration data, or authorization fields. For an unknown future type, preserve its type and useful primitive and nested structured fields, and disclose any display truncation rather than silently dropping data.
 
 ## Follow-up sequences
 Up to 4 follow-ups after the initial (UI caps at 5 total). Each is a full **sequence** with its own `components`:
 ```ts
 follow_ups: [
-  { components: [{ type: "text", text: "..." }], timing: "immediately" },
-  { components: [{ type: "text", text: "..." }], timing: "delay", delay_value: 2, delay_unit: "days" }
+  { components: [{ type: "text", text: "..." }], timing: "delay", delay_value: 10, delay_unit: "minutes" },
+  { components: [{ type: "text_image_card", title: "Reminder", content: "...", image_base64: "..." }], timing: "delay", delay_value: 2, delay_unit: "days" }
 ]
 ```
-- `timing: 'immediately'` → `follow_up_type: 1`, `delay_time: 0`.
-- `timing: 'delay'` → `follow_up_type: 2`, `delay_time = value × unit_seconds` (days 86400 / hours 3600 / minutes 60).
+- Follow-ups are delay-only. Use `timing: 'delay'`; the default is 10 minutes after the previous message.
+- `delay_time = value × unit_seconds` (days 86400 / hours 3600 / minutes 60). The initial message remains immediate.
 
 ## Copy-flow template requirement
 On DM/combined create the MCP calls `/automation/createmessagetemplate` once per message and stores the returned `template_id` in `automation_json.messageSetup.sequences[].components[0].data.selectedTemplates`. This is **required** for the UI's Copy flow (otherwise `validateAutomationSettings` crashes at step 5). If `createMessageTemplate` fails, MCP falls back to raw text in `follow_up_list[].message_content` — the automation still SENDS, but the Copy UI shows an empty editor.

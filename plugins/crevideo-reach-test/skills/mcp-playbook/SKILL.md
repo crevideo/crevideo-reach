@@ -89,6 +89,9 @@ Rules that must not be weakened:
 - `get_product_detail` is the Reach local catalog summary. `get_product_listing_detail` is the official TikTok listing/draft/review representation. Never substitute one for the other.
 
 ## Multi-market scope
+
+The account's actual authorized markets always come from `list_shops`.
+GMV and GPM values are in the selected market's local currency.
 Start with `list_shops`; its returned regions and shop IDs are the account's authority. Currently configured examples include `US`, `GB`, `DE`, `IT`, `FR`, `ES`, `MY`, `ID`, `VN`, `PH`, `TH`, `SG`, `JP`, `BR`, and `MX`, but this is not a permanent whitelist. Never default an unknown or omitted market to US.
 
 Pass `region` to market-level operations, `shop_id_list` to multi-shop reads, and `shop_cipher` to single-shop operations. Do not mix shop IDs across regions. GMV/GPM filters and displayed money use the selected market's local currency; enum boundaries, labels, symbol placement, compact units, and decimal digits differ by market. Never reuse US ranges or apply exchange-rate conversion.
@@ -126,6 +129,16 @@ Direct-entity TCs **don't appear in `list_automations`** — list via `list_targ
 - `get_dm_task_message_template` — read the template a DM task actually used (diagnose "why did the wire body differ from my draft").
 - Anything else (filter / schedule / follow-up structure / non-text component) → `clone_and_modify_automation` + `delete_automation` the old one.
 
+## Result completeness and pagination
+Treat every list response as a page unless completeness is proven by the response.
+
+- Cursor tools: `list_affiliate_content`, `list_conversations`, `get_conversation_messages`, and product/video performance breakdowns. Pass every returned `next_page_token` back unchanged as `page_token`.
+- Page-number tools include `get_affiliate_content_products`, `search_conversations`, the TC section of `get_creator_detail`, creator-list/segment/journey show actions, email-group conversations, and email trash. Continue with `page + 1` when the output says more may be available.
+- A displayed row count is the current page count, not the total. If `total` is absent and the page is full, describe the result as a page and preserve the possibility of more data.
+- Default to `page_size=20` to control latency and token cost. Fetch additional pages only when the user asks for complete history/results or the task cannot be answered from the current page.
+- Never claim "all", "complete", or "full history" while a next token/next-page hint exists. When full retrieval is requested, stop only when no token remains or a page-number response is shorter than the requested page size.
+- If output says records were omitted to control response size, disclose that limitation instead of treating the displayed subset as the complete backend result.
+
 ## High-leverage gotchas (memorize)
 - **FOUR creator ID spaces** ⚠️ (the #1 cause of 101 "bad request"): `user_id` (numeric — detail / notes / find_similar seed / create_conversation / send_email) · record `id` (row UUID — tags / blacklist) · `creator_open_id` (long base64-ish — direct-TC flow only) · `unique_id` (TikTok handle — what humans type; `appoint_creator_list` + bulk `creator_unique_ids` take handles, MCP resolves internally). Rule of thumb: human inputs = handles, analytics = user_id, blacklist/tags = record id, direct-TC = open_id.
 - **Preview token**: 10-min lifetime, **one-shot** (consumed even if the create later throws), **scope-bound** to shop+filter+first_count. If a create fails, **re-run `preview_target_collab`** before retrying — don't reuse the token.
@@ -145,12 +158,12 @@ Direct-entity TCs **don't appear in `list_automations`** — list via `list_targ
 | `skip_messaged_within_days: number` (0=off) | skip anyone messaged within N days | off |
 
 ## Message components (summary)
-Automation DM messages are arrays of `text` / `image` / `product` / `collab` components. Direct `send_message` additionally supports official `text_image_card` and `text_products_card` modes. Full wire formats and the distinction between these surfaces → **`references/message-components.md`**.
+Automation DM messages support `text`, `image`, `text_image_card`, `product`, `text_products_card`, and `collab` components. Direct `send_message` supports the same native composite card meanings through its `mode` parameter. Full wire formats and the distinction between these surfaces → **`references/message-components.md`**.
 
 ## Conversations + email
 - DM: `list_conversations` / `get_conversation_messages` / `send_message` (real outbound — confirm). Triage by group: `list_conversation_groups` → `list_group_conversations` (don't client-side filter the flat list for "unread").
 - `get_conversation_messages` returns **one page**, not the full conversation. The displayed count is the current page count. For recent context, one page is enough; only when the user explicitly requests complete/full history, pass every returned `next_page_token` back as `page_token` until no token remains. Never claim the history is complete while a next token exists.
-- Interpret rich messages by their customer-visible meaning: text+image card, text+products card, product card, target-collaboration invite, free-sample card, and Spark Code authorization request. Report the returned title/text, media URL, products, status, and authorization fields. Preserve the type and useful primitive fields for unknown future message types.
+- Interpret rich messages by their customer-visible meaning: text+image card, text+products card, product card, target-collaboration invite, free-sample card, and Spark Code authorization request. Report the returned title/text, media URL, products, status, and authorization fields. Preserve the type plus useful primitive and nested structured fields for unknown future message types; explicitly disclose any display truncation.
 - 🚨 **DMing a creator NOT in your inbox (not in `list_conversations`, `search_conversations` returns nothing, or you only have their @handle):** "not in the inbox" means no DM thread exists yet — it does **NOT** mean they're unreachable. **Just call `send_message(unique_id='@handle', message_content=...)`** — it finds-or-opens the conversation and sends, all FREE (exactly the brand-app's "open a chat from the creator's profile"). You do **NOT** need to chain `search_affiliate_creators` → `create_conversation` → `send` yourself — the tool does it internally. **Never stop at "can't find the conversation".** (For just opening a thread without sending, `create_conversation` still exists.)
   Do **NOT** fall back to a manual-source `create_dm_automation` (spends 3 credits + creates a standing automation) for a single cold DM — that's only for *bulk* outreach.
 - Email: `thread_id` = root_email_id (a per-message id returns code=-1); read `get_email_detail` before `reply_email`. `send_email` requires `shop_id` (auto-resolves single-shop). Templates are starting drafts, not verbatim sends. Both send tools need `confirm:true`.
