@@ -1,15 +1,16 @@
 ---
 name: mcp-playbook
 description: >-
-  Deep reference / playbook for correctly driving the crevideo-reach MCP — TikTok Shop affiliate (分销) work:
-  tool map (79 tools), the create flow, TC automation-wrapper vs direct entity, Open Collaboration (OC),
+  Deep reference / playbook for correctly driving the crevideo-reach MCP — TikTok Shop affiliate (分销) and product-listing work:
+  tool map (89 tools), the affiliate create flow, product onboarding, TC automation-wrapper vs direct entity, Open Collaboration (OC),
   read-side tool choice, filter schema, ID-space gotchas, message components, naming, reporting gotchas,
   sample approval, email centre, and debugging. Use when creating/listing/debugging outreach automations
   (TC / DM), running Open Collaborations, pulling affiliate analytics (collaboration / product /
   shoppable-video GMV / orders), managing affiliate creators (list / detail / blacklist / tags / lists /
-  segments / journeys), discovering creators, approving sample requests, or handling DM / email conversations.
-  Affiliate-only — campaign/marketing out of scope. Triggers on 自动化/目标合作/公开合作/给达人发消息/发邮件/
-  分销报表/分销订单/GMV/达人表现/我的达人/找达人/黑名单/分群/申样/私信 and the English equivalents.
+  segments / journeys), discovering creators, approving sample requests, handling DM / email conversations,
+  or creating/checking TikTok Shop product listings. Campaign/marketing remains out of scope. Triggers on
+  自动化/目标合作/公开合作/给达人发消息/发邮件/上架商品/新建商品/商品草稿/商品发布/分销报表/分销订单/
+  GMV/达人表现/我的达人/找达人/黑名单/分群/申样/私信 and the English equivalents.
 ---
 
 # Crevideo Reach MCP — Playbook
@@ -25,28 +26,32 @@ The **deep-reference layer** for the `crevideo-reach` MCP server. The MCP itself
 - Pure MCP-protocol or Claude-skill mechanics questions → wrong skill.
 - Nothing about automations, creators, affiliate analytics, TikTok Shop, or the reach area → don't invoke.
 
-## Scope: affiliate (分销) only
-The MCP exposes **only affiliate/distribution** features. Campaign/marketing surfaces (campaign management, `/report/*` campaign reports, creator **marketplace** discovery, custom products, brand sampling) are **not** tools here — say they're out of scope. `query_*_performance` covers **collaboration / affiliate-product / shoppable-video** (affiliate), not campaign reports.
+## Scope: affiliate (分销) + TikTok Shop product listing
+The MCP exposes affiliate/distribution features plus TikTok Shop product onboarding. Campaign/marketing surfaces (campaign management, `/report/*` campaign reports, creator **marketplace** discovery, custom products, brand sampling) are **not** tools here — say they're out of scope. `query_*_performance` covers **collaboration / affiliate-product / shoppable-video** (affiliate), not campaign reports.
 There is **no** natural-language→filter and **no** copy-polish endpoint — **you (the LLM) translate the user's words into structured filters yourself**, and you write/edit message copy yourself.
 
-## Tool map (79 tools, 15 groups)
+## Tool map (89 tools, 16 groups)
 Many tools **fold multiple endpoints behind a `view` / `action` / `scope` / `op_type` param** — pass those to drill in; don't expect one tool per endpoint.
 
 - **Automations (💳 on create):** `list_automations`, `get_automation_detail`, `get_automation_task_results`, `preview_target_collab` (free, 10-min token), `create_target_collab`, `create_dm_automation`, `create_tc_dm_automation`, `clone_and_modify_automation`, `start_automation` / `pause_automation` / `delete_automation`, `update_dm_automation_text`, `create_bulk_tc_operation`, `manage_message_templates`, `get_dm_task_message_template`.
 - **TC direct entity (no automation wrapper):** `list_target_collaborations`, `get_target_collaboration_detail`, `preview_target_collab_direct`, `create_target_collab_direct`, `update_target_collab_direct`, `cancel_target_collaboration`, `add_creator_to_target_collaboration`. See "TC: two creation paths" below.
 - **Open Collaboration (OC):** `list_open_collaborations`, `get_open_collaboration_detail`, `create_open_collaboration`, `modify_open_collaboration`, `remove_open_collaboration`, `manage_open_collaboration_settings` (get/edit), `manage_open_collaboration_sample_rule` (get/edit), `remove_creator_from_open_collaboration`, `list_not_added_open_collaboration_products`, `get_open_collaboration_product_count`, `get_open_collaboration_status_counts`.
-- **Reporting (read-only, 3 tools):** `query_collaboration_performance` (`scope`: target/open/both), `query_product_performance`, `query_shoppable_video_performance`. breakdown/detail views run on **TT-official REAL-TIME data** (matches the brand-app page; video adds GPM + daily avg customers, product AOV is derived GMV÷orders); overview/trend stay on legacy aggregates — small drift between the two is expected, explain it rather than "fix" it. **There is NO `query_ai_insight` tool — produce insight yourself by reading these three reports.**
+- **Reporting (read-only, 3 tools):** `query_collaboration_performance` (`scope`: target/open/both), `query_product_performance`, `query_shoppable_video_performance`. Product/video breakdown/detail views run on **TT-official REAL-TIME data** (matches the brand-app page; video adds GPM + daily avg customers, product AOV is derived GMV÷orders); overview/trend stay on legacy aggregates — small drift between the two is expected, explain it rather than "fix" it. Breakdown lists use cursor pagination: pass each returned `next_page_token` back unchanged as `page_token`; the legacy `page` number does not advance them. **There is NO `query_ai_insight` tool — produce insight yourself by reading these three reports.**
 - **Affiliate orders:** `list_affiliate_orders` (TC dimension — the canonical "我分销卖了多少" answer; `target_collaboration_id` REQUIRED), `list_customer_creator_orders` (🚨 naming trap — CA dimension, NOT distribution GMV).
 - **Creators:** `list_affiliate_creators`, `get_creator_detail`, `manage_creator_blacklist` (list/add/remove/modify), `update_creator_metadata`, `manage_segment`, `manage_journey`, `manage_creator_lists`, `get_creator_list_overview`, `search_affiliate_creators` (filters **or `creator_keyword` to resolve a @handle → user_id**), `find_similar_creators`, `recommend_creators` (达人罗盘 — backend match-score recommendation by product), `list_customer_advocates`, `manage_customer_advocates` (6 actions — collect/collect_history/set_notes/get_detail/list_records/get_overview; no add_tag), `manage_contact_enrichment` (add_creators is a source switch: manual/filter/list/segment/journey/target_collab).
 - **Content:** `list_affiliate_content` (TT-official REAL-TIME published videos — needs `shop_cipher`, optional date range/`account_type`/`page_token`; pass returned `next_page_token` back as `page_token` to continue), `get_affiliate_content_products`, `manage_affiliate_content` (list/add_notes — legacy row ids; use its ids for notes, not the real-time list's).
-- **DM conversations:** `list_conversations`, `get_conversation_messages`, `send_message` (real outbound — `text`, `image`, `text_image_card`, or `text_products_card`; by conversation_id OR unique_id='@handle' which auto-finds/opens the thread; all modes require confirm), `search_conversations`, `create_conversation`, `list_conversation_groups`, `list_group_conversations`, `manage_conversation_groups`.
+- **DM conversations:** `list_conversations`, `get_conversation_messages` (cursor-paginated, default 20 per page), `send_message` (real outbound — `text`, `image`, `text_image_card`, or `text_products_card`; by conversation_id OR unique_id='@handle' which auto-finds/opens the thread; all modes require confirm), `search_conversations`, `create_conversation`, `list_conversation_groups`, `list_group_conversations`, `manage_conversation_groups`.
 - **Email (10 tools, LIVE):** `list_email_conversations`, `get_email_detail`, `send_email`, `reply_email`, `manage_email_templates` (CRUD), `manage_email_drafts` (CRUD), `mark_email_as_read`, `move_emails_to_trash`, `manage_email_groups` (folders — list/create/rename/delete/add/move/remove), `manage_email_trash` (list/restore/delete_permanently). `send_email` / `reply_email` are **real outbound** — confirm intent first.
 - **Samples (申样):** `manage_sample_auto_approval` (get/update rules), `manage_sample_applications` (list/approve/reject the manual queue).
-- **Shops/products:** `list_shops`, `list_products`, `get_product_detail`, `list_creator_categories`.
+- **Shop/catalog reads:** `list_shops`, `list_products`, `get_product_detail`, `list_creator_categories`.
+- **Product listing (US-only, 10 tools):** `check_product_listing_prerequisites`, `discover_product_category`, `get_product_category_requirements`, `search_product_brands`, `get_product_fulfillment_options`, `search_product_compliance_entities`, `upload_product_asset`, `check_product_listing`, `create_product_listing`, `get_product_listing_detail`.
 
 > **Renamed tools — never call the old names**: `list_email_templates` → `manage_email_templates` with `action:'list'`; `list_shop_orders` → `list_affiliate_orders`; `list_segments` / `list_journeys` → `manage_segment` / `manage_journey` with `action:'list'` (list returns both official + custom entries).
 
-## The canonical create flow
+## Intent routing: product listing is not affiliate promotion
+“上架/新建/发布一个商品”, “product onboarding”, and “create a listing” mean the **product-listing** flow below. “给现有商品创建推广/邀约达人/建 TC”, “promote a product”, and “create a collaboration” mean the **affiliate automation** flow. If the user only says “创建商品流程” and the intent is unclear, ask exactly one short clarification: “你要上架一个新的 TikTok Shop 商品，还是为已有商品创建达人推广计划？” Never claim listing tools are absent without checking the live tool list.
+
+## The canonical affiliate-automation create flow
 Every automation create chains these 6 phases — don't jump to the final call:
 ```
 1. Shop         → list_shops if user hasn't specified one
@@ -57,6 +62,31 @@ Every automation create chains these 6 phases — don't jump to the final call:
 6. Create       → create_* with preview_token + final params
 ```
 **Only skip a phase** when the user explicitly supplied that data. Don't invent defaults for shop or products.
+
+## The canonical product-listing flow (US only)
+Product listing is a separate workflow and currently accepts **US shops only**. Non-US creator, reporting, messaging, and automation capabilities remain available; only product onboarding is US-gated.
+
+```
+1. Shop          → list_shops, select an authorized US shop_cipher
+2. Prerequisites → check_product_listing_prerequisites
+3. Category      → discover_product_category (query or recommend)
+4. Requirements  → get_product_category_requirements (rules + attributes)
+5. Inputs        → search_product_brands + get_product_fulfillment_options; compliance entities when required
+6. Assets        → upload_product_asset, then place the returned URI in product_data
+7. Check         → check_product_listing (default save_mode=AS_DRAFT) → listing_token + product_hash
+8. Confirm       → show diagnostics and intended save_mode; ask the user to confirm
+9. Create        → create_product_listing(listing_token, confirm=true)
+10. Verify       → get_product_listing_detail(return_draft_version=true for drafts)
+```
+
+Rules that must not be weakened:
+- Hosted MCP cannot read a path on the user's computer. For hosted WorkBuddy/Codex/Claude sessions, pass `file_base64` to `upload_product_asset`; `file_path` is local-MCP-only.
+- Category rules and attributes are authoritative. Do not invent required values or reuse an uploaded URI across shops.
+- `check_product_listing` binds the exact checked payload, shop, save mode, local-sync choice, product hash, and one idempotency key into a 15-minute token. Creation accepts the token instead of a new product payload.
+- `AS_DRAFT` is the default. A live `LISTING` must be selected during check and then needs both `confirm=true` and `confirm_publish=true` at create time.
+- A failed network/backend create keeps the same token and idempotency key available for a controlled retry. A successful create consumes the token.
+- If TikTok creation succeeds but `local_sync_success` is `0`/`false`, report **partial success**, query the official product by `product_id`, and never call create again.
+- `get_product_detail` is the Reach local catalog summary. `get_product_listing_detail` is the official TikTok listing/draft/review representation. Never substitute one for the other.
 
 ## Multi-market scope
 Start with `list_shops`; its returned regions and shop IDs are the account's authority. Currently configured examples include `US`, `GB`, `DE`, `IT`, `FR`, `ES`, `MY`, `ID`, `VN`, `PH`, `TH`, `SG`, `JP`, `BR`, and `MX`, but this is not a permanent whitelist. Never default an unknown or omitted market to US.
@@ -115,10 +145,12 @@ Direct-entity TCs **don't appear in `list_automations`** — list via `list_targ
 | `skip_messaged_within_days: number` (0=off) | skip anyone messaged within N days | off |
 
 ## Message components (summary)
-Automation DM messages are ordered arrays of `text` / `image` / `product` / `collab` / `text_image_card` / `text_products_card` components. The two native composite cards work in both the initial message and every delayed follow-up. **Intent rule:** when the user only says "图文" / "图文私信" / "文字配图", ask "要单张图文卡，还是文字和图片分开发？" before preview/create. Explicit "图文卡/不要分开" means ONE `text_image_card`; explicit "分开发/两个组件/两条消息" means separate `text` + `image`. "文字商品卡" means ONE `text_products_card` unless separation is explicit. Direct `send_message` supports the same card names as message modes. Full wire formats → **`references/message-components.md`**.
+Automation DM messages are arrays of `text` / `image` / `product` / `collab` components. Direct `send_message` additionally supports official `text_image_card` and `text_products_card` modes. Full wire formats and the distinction between these surfaces → **`references/message-components.md`**.
 
 ## Conversations + email
 - DM: `list_conversations` / `get_conversation_messages` / `send_message` (real outbound — confirm). Triage by group: `list_conversation_groups` → `list_group_conversations` (don't client-side filter the flat list for "unread").
+- `get_conversation_messages` returns **one page**, not the full conversation. The displayed count is the current page count. For recent context, one page is enough; only when the user explicitly requests complete/full history, pass every returned `next_page_token` back as `page_token` until no token remains. Never claim the history is complete while a next token exists.
+- Interpret rich messages by their customer-visible meaning: text+image card, text+products card, product card, target-collaboration invite, free-sample card, and Spark Code authorization request. Report the returned title/text, media URL, products, status, and authorization fields. Preserve the type and useful primitive fields for unknown future message types.
 - 🚨 **DMing a creator NOT in your inbox (not in `list_conversations`, `search_conversations` returns nothing, or you only have their @handle):** "not in the inbox" means no DM thread exists yet — it does **NOT** mean they're unreachable. **Just call `send_message(unique_id='@handle', message_content=...)`** — it finds-or-opens the conversation and sends, all FREE (exactly the brand-app's "open a chat from the creator's profile"). You do **NOT** need to chain `search_affiliate_creators` → `create_conversation` → `send` yourself — the tool does it internally. **Never stop at "can't find the conversation".** (For just opening a thread without sending, `create_conversation` still exists.)
   Do **NOT** fall back to a manual-source `create_dm_automation` (spends 3 credits + creates a standing automation) for a single cold DM — that's only for *bulk* outreach.
 - Email: `thread_id` = root_email_id (a per-message id returns code=-1); read `get_email_detail` before `reply_email`. `send_email` requires `shop_id` (auto-resolves single-shop). Templates are starting drafts, not verbatim sends. Both send tools need `confirm:true`.
@@ -134,5 +166,5 @@ Automation DM messages are ordered arrays of `text` / `image` / `product` / `col
 
 ## Deep references (load on demand)
 - **`references/filters.md`** — full `preview_target_collab` filter schema: every field shape, enum buckets, the ×100 / no-×100 rules, and a natural-language→filter example.
-- **`references/message-components.md`** — all 6 component types, native-card intent routing, image OSS upload, collab-card scope, and follow-up sequence wire detail.
+- **`references/message-components.md`** — the 4 component types' wire formats, image OSS upload, collab-card scope, unsupported composites, and follow-up sequence wire detail.
 - **`references/debugging.md`** — the 3-layer (curl readback → wire capture → source read) debugging method, common error→cause table, Copy-flow template requirement, sample-approval radios, and the version-change history.
