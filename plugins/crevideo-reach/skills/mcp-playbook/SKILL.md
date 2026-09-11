@@ -94,7 +94,12 @@ The account's actual authorized markets always come from `list_shops`.
 GMV and GPM values are in the selected market's local currency.
 Start with `list_shops`; its returned regions and shop IDs are the account's authority. Currently configured examples include `US`, `GB`, `DE`, `IT`, `FR`, `ES`, `MY`, `ID`, `VN`, `PH`, `TH`, `SG`, `JP`, `BR`, and `MX`, but this is not a permanent whitelist. Never default an unknown or omitted market to US.
 
-Pass `region` to market-level operations, `shop_id_list` to multi-shop reads, and `shop_cipher` to single-shop operations. Do not mix shop IDs across regions. GMV/GPM filters and displayed money use the selected market's local currency; enum boundaries, labels, symbol placement, compact units, and decimal digits differ by market. Never reuse US ranges or apply exchange-rate conversion.
+Pass `region` to market-level operations, `shop_id_list` to multi-shop reads, and `shop_cipher` to single-shop operations. Do not mix shop IDs across regions. GMV/GPM filters and displayed money use the selected market.s local currency; enum boundaries, labels, symbol placement, compact units, and decimal digits differ by market. Never reuse US ranges or apply exchange-rate conversion.
+
+**Read completeness rules:**
+- `get_creator_detail`: select the creator.s market first and pass `region`; when a shop is known, also pass its `shop_cipher`. Never reuse a `user_id` across markets without resolving scope again.
+- `get_affiliate_content_products`: always pass the `shop_cipher` of the shop that produced the `content_id`; a shop-wide product overview without shop scope is invalid.
+- If a tool returns `Partial result` or non-empty `structuredContent.partial_errors`, report which subsection failed. Do not reinterpret missing metrics, dashes, or empty arrays from that subsection as real zero/no-data values.
 
 **Creator source alternates** (skip preview; need `shop_cipher`): `source='manual'` takes `appoint_creator_list` = **TikTok handles** (unique_id, `@` ok) — the MCP resolves them to the right wire ID space automatically; unknown handles fail fast. `'list'` / `'segment'` / `'journey'` take IDs from the matching `manage_*` list action; `'target_collab'` (DM-only) re-targets a TC automation's creators; `'intelligent_recommend'` (**TC/combined only — needs a product**) takes `appoint_creator_list` = **creator_open_ids from `recommend_creators`** (达人罗盘 / AI Creator Compass). `clone_and_modify_automation` is filter-source-only — manual-source automations can't be cloned, create anew.
 
