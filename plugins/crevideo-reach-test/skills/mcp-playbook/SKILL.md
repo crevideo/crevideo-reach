@@ -118,10 +118,28 @@ Direct-entity TCs **don't appear in `list_automations`** — list via `list_targ
 |---|---|---|
 | `list_automations` | "What does the list look like?" | Browsing / finding an ID / filtering by status+type |
 | `get_automation_detail` | "What is this configured to do + overall stats?" | Name/ID → config / shop / product / filter / overview |
-| `get_automation_task_results` | "Who got reached, and what happened to each?" | Post-send per-creator status + failure reasons |
+| `get_automation_task_results` | "What did this task actually do?" | Per-creator outreach results or TC bulk-operation metrics |
 
 - `list_automations` — **always pass arrays** for `statuses` / `automation_types` (scalar is silently ignored). Statuses: `pending`(=`draft`)/`active`/`paused`/`completed`/`failed`. Types: `tc`/`dm`/`combined`. Page ≤ 50, default 10. `search_by:'no'` matches `automation_no`; default matches name LIKE.
-- `get_automation_task_results` **auto-detects** `kind`+`task_id` from `automation_type` — usually just pass `automation_id`. Draft automations return empty (start first).
+- `get_automation_task_results` **auto-detects** `kind`+`task_id` only when the automation has one unambiguous matching task. Draft automations return empty (start first). If a TC automation has multiple tasks, call `get_automation_detail`, choose the intended task, and pass its `task_id`; never silently use the first task.
+
+### TC task-result semantics
+Treat `task_type` as the contract for interpreting TC task results. Numeric strings such as `"103"` mean the same thing as numbers.
+
+| `task_type` | Meaning | Report as |
+|---|---|---|
+| `101` | Create / initial TC outreach | Per-creator invitation outcomes |
+| `102` | Add creators | Planned creators, actually added creators, failures |
+| `103` | Remove creators | Planned removals, actually removed creators, failures |
+| `104` | Add products | Planned products, actually added products, failures |
+| `105` | Remove products | Planned removals, actually removed products, failures |
+| `106` | Edit TC settings | Fields requested, success/failure, failure reason if present |
+| `107` | Cancel TC | Cancellation outcome and failure reason if present |
+
+- `creator_planned` / `product_planned` are the intended scope before execution; `creator_added`, `creator_removed`, `product_added`, and `product_removed` are actual outcomes. They describe different stages of the **same operation**: never add them together and never relabel a removal as `Invited`.
+- The backend historically spells the payload field `excute_result`; `execute_result` is also accepted. Interpret either using the selected `task_type`, not with the generic TC invitation table.
+- `result: "Success!"` is an execution outcome, not a failure reason. Show failure reasons only for failed/skipped entries or explicit failure fields.
+- If `task_type` is unknown, say that the subtype is unsupported and preserve the raw result. Do not guess a task meaning, synthesize a missing reason, or force the payload into another task's table.
 
 ## Editing without recreate
 - `update_dm_automation_text` — replace one text body in a running DM (text components only; image/product/collab → clone instead).
